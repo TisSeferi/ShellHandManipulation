@@ -30,9 +30,6 @@ class DataGuy():
     def load_from_file(self, path):
         self.df = pd.read_csv(path)
     def from_landmark(self, landmark):
-        xarray_3d = xr.Dataset(
-            {"product_A": 1}
-        )
         d = np.zeros((NUM_POINTS, 3))
         for id, lm in enumerate(landmark):
             d[id][0] = lm.x
