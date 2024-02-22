@@ -5,6 +5,7 @@ import time
 import DataManagement as dm
 
 class HandDetecter:
+
     def __init__(self, DataManagement):
         self.cap = cv2.VideoCapture(0)
         self.mpHands = mp.solutions.hands
@@ -35,14 +36,14 @@ class HandDetecter:
 
             self.mpDraw.draw_landmarks(img, handLms, self.mpHands.HAND_CONNECTIONS)
 
-            currTime = time.time()
-            fps = 1 / (currTime - prevTime)
-            prevTime = currTime
+            self.currTime = time.time()
+            fps = 1 / (self.currTime - self.prevTime)
+            self.prevTime = self.currTime
 
             cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
             cv2.imshow("Image", img)
 
-            if (cv2.waitkey(1) & 0xFF ==27):
+            if (cv2.waitKey(1) & 0xFF ==27):
                 break
 
         self.cap.release()
