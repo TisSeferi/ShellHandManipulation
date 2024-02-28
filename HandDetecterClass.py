@@ -18,6 +18,7 @@ class HandDetector:
         self.hands = self.mpHands.Hands()
         self.mpDraw = mp.solutions.drawing_utils
         self.actions = actions
+        self.arr = [0,0,0,0,0]
         print("HandDetector initialized successfully.")
 
         self.NUM_POINTS = 21
@@ -70,45 +71,7 @@ class HandDetector:
         return np.linalg.norm(df1[cols].values - df2[cols].values, axis=1)
 
 
-    def centroid(df, centr_selection=None):
-        if centr_selection is None:
-            #centr_selection = [
-            #    'wrist',  # 0
-            #    'thumb_ip',
-            #    'thumb_tip',
-            #    'index_finger_mcp',
-            #    'pinky_mcp'
-            #]
-            centr_selection = [
-                'wrist',  # 0
-                'thumb_ip',  # 2,
-                'index_finger_pip',  # 6,
-                'middle_finger_pip',#10,
-                'ring_finger_pip',#14,
-                'pinky_pip',  # 18
-            ]
-            # centr_selection = [
-            #    'wrist',#0
-            #    'thumb_mcp',#2,
-            #    'index_finger_mcp',#6,
-            #    #'middle_finger_mcp',#10,
-            #    #'ring_finger_mcp',#14,
-            #    'pinky_mcp',#18
-            # ]
-            # centr_selection = [
-            #    'wrist',
-            #    'thumb_tip',
-            #    'index_finger_tip',
-            #    'middle_finger_tip'
-            #    'ring_finger_tip',
-            #    'pinky_tip'
-            # ]
-        circ = df.loc[centr_selection]
-        return circ.mean()
-
-        #eturn df.loc['wrist']
-
-
+   
     def fings_up(self, df):
         tip_selection = [
             'thumb_tip',  # 4
@@ -142,6 +105,15 @@ class HandDetector:
         tips[0] = self.Euclidean_Dist(df.loc[tip_selection], thumb_ref)[0]
         ret = np.greater_equal(tips, knucks)
 
+        
+        self.arr[0] += ret[0]
+        self.arr[1] += ret[1]
+        self.arr[2] += ret[2]
+        self.arr[3] += ret[3]
+        self.arr[4] += ret[4]
+        
+
+        print(self.arr)
         return tuple(ret)
 
 def launch_chrome():
