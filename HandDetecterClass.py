@@ -5,6 +5,11 @@ import pandas as pd
 import time
 import DataManagement as dm
 import webbrowser
+import PIL.ImageGrab
+import keyboard
+import pyautogui
+
+
 
 class HandDetector:
     def __init__(self, actions):
@@ -19,6 +24,10 @@ class HandDetector:
         self.mpDraw = mp.solutions.drawing_utils
         self.actions = actions
         self.arr = [0,0,0,0,0]
+        self.test_flag = False
+
+        self.slow = 0
+
         print("HandDetector initialized successfully.")
 
         self.NUM_POINTS = 21
@@ -111,16 +120,59 @@ class HandDetector:
         self.arr[2] += ret[2]
         self.arr[3] += ret[3]
         self.arr[4] += ret[4]
-        
 
-        print(self.arr)
+        if(ret[0] and ret[1] and ret[2] and ret[3] and ret[4]):
+            print('wow')
+            self.test_flag = True
+
+        if not (ret[0] or ret[1] or ret[2] or ret[3] or ret[4]):
+            self.test_flag = False
+
+        if self.test_flag:
+            self.slow += 1
+            if self.slow == 2:
+                self.slow = 0
+                w, h = pyautogui.size()
+                index_tip = df.loc['index_finger_mcp']
+                w = (w * 2 * (1 - index_tip['x'])) % w
+                h = (h * 1.1 * index_tip['y']) % h
+                #pyautogui.moveTo(w, h, 0, pyautogui.easeInElastic)
+                #pyautogui.moveTo(w, h, 0, pyautogui.easeInBounce)
+                pyautogui.moveTo(w, h, 0, pyautogui.easeInOutQuad)
+
+            if not ret[1]:
+                pyautogui.click()
+
+                
+                
+
+        
+    
         return tuple(ret)
 
 def launch_chrome():
     webbrowser.open('https://www.google.com')
 
+
+def take_screenshot():
+    im = PIL.ImageGrab.grab()
+    im.show()
+
+def close_window():
+    keyboard.press('alt')
+    keyboard.press('f4')
+    keyboard.release('f4')
+    keyboard.release('alt')
+
+def set_flag(self):
+    self.flag = True
+
+
 gesture_actions = {
     (False, True, True, False, False): launch_chrome,
+    (True, True, True, False, False): take_screenshot,
+    #(False, False, False, False, False): close_window,
+
     }
 
 hand_detector = HandDetector(gesture_actions)
