@@ -40,6 +40,9 @@ class HandDetector:
             'pinky_mcp', 'pinky_pip', 'pinky_dip', 'pinky_tip',
         ]
 
+        self.last_action = 0
+        self.cooldown = 2
+
     def get_frame_and_landmarks(self):
         success, img = self.cap.read()
         if not success:
@@ -60,9 +63,12 @@ class HandDetector:
         self.cap.release()
 
     def recognize_gesture(self, fingos):
-        action = gesture_actions.get(fingos)
-        if action:
-            action()
+        actionTime = time.time()
+        if (actionTime - self.last_action > self.cooldown):
+            action = gesture_actions.get(fingos)
+            if action:
+                action()
+                self.last_action = actionTime
 
 
     def to_data_frame(self, landmark):
@@ -158,11 +164,17 @@ def take_screenshot():
     im = PIL.ImageGrab.grab()
     im.show()
 
-def close_window():
+def alt_f4():
     keyboard.press('alt')
     keyboard.press('f4')
     keyboard.release('f4')
     keyboard.release('alt')
+
+def close_window():
+    keyboard.press('Ctrl')
+    keyboard.press('w')
+    keyboard.release('Ctrl')
+    keyboard.release('w')
 
 def set_flag(self):
     self.flag = True
@@ -171,7 +183,8 @@ def set_flag(self):
 gesture_actions = {
     (False, True, True, False, False): launch_chrome,
     (True, True, True, False, False): take_screenshot,
-    #(False, False, False, False, False): close_window,
+    (False, True, False, False, True): alt_f4,
+    (False, True, True, True, False): close_window,
 
     }
 
