@@ -41,7 +41,7 @@ class HandDetector:
         ]
 
         self.last_action = 0
-        self.cooldown = 2
+        self.cooldown = 1.3
 
     def get_frame_and_landmarks(self):
         success, img = self.cap.read()
@@ -144,7 +144,7 @@ class HandDetector:
 
                 autopy.mouse.move(x, y)
 
-            if not ret[1]:
+            if not (ret[0] and ret[1]):
                 autopy.mouse.click()
 
                 
@@ -179,8 +179,8 @@ def set_flag(self):
 
 
 gesture_actions = {
-    #(False, True, True, False, False): launch_chrome,
-    (True, True, True, False, False): take_screenshot,
+    (False, True, True, False, False): launch_chrome,
+    (False, False, False, False, True): take_screenshot,
     (False, True, False, False, True): alt_f4,
     (False, True, True, True, False): close_window,
 
