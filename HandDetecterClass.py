@@ -7,7 +7,7 @@ import DataManagement as dm
 import webbrowser
 import PIL.ImageGrab
 import keyboard
-import pyautogui
+import autopy
 
 
 
@@ -128,7 +128,6 @@ class HandDetector:
         self.arr[4] += ret[4]
 
         if(ret[0] and ret[1] and ret[2] and ret[3] and ret[4]):
-            print('wow')
             self.test_flag = True
 
         if not (ret[0] or ret[1] or ret[2] or ret[3] or ret[4]):
@@ -138,16 +137,15 @@ class HandDetector:
             self.slow += 1
             if self.slow == 2:
                 self.slow = 0
-                w, h = pyautogui.size()
+                w, h = autopy.screen.size()
                 index_tip = df.loc['index_finger_mcp']
-                w = (w * 2 * (1 - index_tip['x'])) % w
-                h = (h * 1.1 * index_tip['y']) % h
-                #pyautogui.moveTo(w, h, 0, pyautogui.easeInElastic)
-                #pyautogui.moveTo(w, h, 0, pyautogui.easeInBounce)
-                pyautogui.moveTo(w, h, 0, pyautogui.easeInOutQuad)
+                x = (w * 2 * (1 - index_tip['x'])) % w
+                y = (h * 1.1 * index_tip['y']) % h
+
+                autopy.mouse.move(x, y)
 
             if not ret[1]:
-                pyautogui.click()
+                autopy.mouse.click()
 
                 
                 
@@ -181,7 +179,7 @@ def set_flag(self):
 
 
 gesture_actions = {
-    (False, True, True, False, False): launch_chrome,
+    #(False, True, True, False, False): launch_chrome,
     (True, True, True, False, False): take_screenshot,
     (False, True, False, False, True): alt_f4,
     (False, True, True, True, False): close_window,
@@ -215,6 +213,18 @@ while True:
 
             end_x = start_x + 170
             dy = 30
+            print(temp.loc['middle_finger_tip']['x'])
+            if fingos[2] and not(fingos[1] or fingos[3] or fingos[4]) :
+                tip = (int(temp.loc['middle_finger_tip']['x'] * w), int(temp.loc['middle_finger_tip']['y'] * h))
+                dip = (int(temp.loc['middle_finger_dip']['x'] * w), int(temp.loc['middle_finger_dip']['y'] * h))
+                pip = (int(temp.loc['middle_finger_pip']['x'] * w), int(temp.loc['middle_finger_pip']['y'] * h))
+                mcp = (int(temp.loc['middle_finger_mcp']['x'] * w), int(temp.loc['middle_finger_mcp']['y'] * h))
+
+                #cv2.line(img, tip, dip, (0, 0, 0), 25)
+                #cv2.line(img, dip, pip, (0, 0, 0), 25)
+                #cv2.line(img, pip, mcp, (0, 0, 0), 25)
+                cv2.line(img, tip, mcp, (0, 0, 0), 45)
+                
             cv2.rectangle(img, (start_x - 20, start_y - dy), (end_x, start_y + 5 * dy), (0, 0, 0), -1)
             for ind, val in enumerate(['thumb', 'index_finger', 'middle_finger', 'ring_finger', 'pinky']):
                 text = f'{val}: {"Up" if fingos[ind] else "Down"}'
