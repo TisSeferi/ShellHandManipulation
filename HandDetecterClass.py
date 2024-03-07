@@ -226,7 +226,19 @@ while True:
                 #cv2.line(img, tip, dip, (0, 0, 0), 25)
                 #cv2.line(img, dip, pip, (0, 0, 0), 25)
                 #cv2.line(img, pip, mcp, (0, 0, 0), 25)
-                cv2.line(img, tip, mcp, (0, 0, 0), 45)
+
+                text ='CENSORED'
+                
+                mdx = 50
+                mdy = 20
+                
+                x, y = pip
+                p0 = (x - mdx, y)
+                p1 = (x + mdx , y + mdy)
+                p2 = (x - mdx, y - mdy)
+
+                cv2.rectangle(img, p1, p2, (0, 0, 0), -1)
+                cv2.putText(img, text, p0, cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 2)
                 
             cv2.rectangle(img, (start_x - 20, start_y - dy), (end_x, start_y + 5 * dy), (0, 0, 0), -1)
             for ind, val in enumerate(['thumb', 'index_finger', 'middle_finger', 'ring_finger', 'pinky']):
