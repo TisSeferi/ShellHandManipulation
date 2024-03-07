@@ -7,7 +7,9 @@ import DataManagement as dm
 import webbrowser
 import PIL.ImageGrab
 import keyboard
-import autopy
+import pyautogui
+import win32con
+import win32api
 
 
 
@@ -25,6 +27,7 @@ class HandDetector:
         self.actions = actions
         self.arr = [0,0,0,0,0]
         self.test_flag = False
+        self.w, self.h = pyautogui.size()
 
         self.slow = 0
 
@@ -41,16 +44,19 @@ class HandDetector:
         ]
 
         self.last_action = 0
-        self.cooldown = 1.3
+        self.cooldown = 2
 
     def get_frame_and_landmarks(self):
         success, img = self.cap.read()
         if not success:
             return None, None
+        
+        img = cv2.resize(img, (640, 480))
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         results = self.hands.process(imgRGB)
         if results.multi_hand_landmarks:
-            return img, results.multi_hand_landmarks
+            hands_landmarks = [results.multi_hand_landmarks[0]]
+            return img, hands_landmarks
         return img, None
     
     def draw_landmarks(self, img, hand_landmarks):
@@ -137,15 +143,15 @@ class HandDetector:
             self.slow += 1
             if self.slow == 2:
                 self.slow = 0
-                w, h = autopy.screen.size()
                 index_tip = df.loc['index_finger_mcp']
-                x = (w * 2 * (1 - index_tip['x'])) % w
-                y = (h * 1.1 * index_tip['y']) % h
+                x = int((self.w * 2 * (1 - index_tip['x']))) % self.w
+                y = int((self.h * 1.1 * index_tip['y'])) % self.h
 
-                autopy.mouse.move(x, y)
+                win32api.SetCursorPos((x, y))
 
-            if not (ret[0] and ret[1]):
-                autopy.mouse.click()
+            if not ret[1]:
+                pyautogui.click()
+                
 
                 
                 
@@ -223,12 +229,24 @@ while True:
                 #cv2.line(img, tip, dip, (0, 0, 0), 25)
                 #cv2.line(img, dip, pip, (0, 0, 0), 25)
                 #cv2.line(img, pip, mcp, (0, 0, 0), 25)
-                cv2.line(img, tip, mcp, (0, 0, 0), 45)
+
+                text ='CENSORED'
                 
-            cv2.rectangle(img, (start_x - 20, start_y - dy), (end_x, start_y + 5 * dy), (0, 0, 0), -1)
-            for ind, val in enumerate(['thumb', 'index_finger', 'middle_finger', 'ring_finger', 'pinky']):
-                text = f'{val}: {"Up" if fingos[ind] else "Down"}'
-                cv2.putText(img, text, (start_x, start_y + ind * dy), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 2)
+                mdx = 50
+                mdy = 20
+                
+                x, y = pip
+                p0 = (x - mdx, y)
+                p1 = (x + mdx , y + mdy)
+                p2 = (x - mdx, y - mdy)
+
+                cv2.rectangle(img, p1, p2, (0, 0, 0), -1)
+                cv2.putText(img, text, p0, cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 2)
+                
+           # cv2.rectangle(img, (start_x - 20, start_y - dy), (end_x, start_y + 5 * dy), (0, 0, 0), -1)
+           # for ind, val in enumerate(['thumb', 'index_finger', 'middle_finger', 'ring_finger', 'pinky']):
+           #     text = f'{val}: {"Up" if fingos[ind] else "Down"}'
+           #     cv2.putText(img, text, (start_x, start_y + ind * dy), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 2)
 
 
     currTime = time.time()
