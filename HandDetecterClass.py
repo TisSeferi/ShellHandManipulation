@@ -47,10 +47,13 @@ class HandDetector:
         success, img = self.cap.read()
         if not success:
             return None, None
+        
+        img = cv2.resize(img, (640, 480))
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         results = self.hands.process(imgRGB)
         if results.multi_hand_landmarks:
-            return img, results.multi_hand_landmarks
+            hands_landmarks = [results.multi_hand_landmarks[0]]
+            return img, hands_landmarks
         return img, None
     
     def draw_landmarks(self, img, hand_landmarks):
