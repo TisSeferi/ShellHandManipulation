@@ -28,6 +28,7 @@ class HandDetector:
         self.arr = [0,0,0,0,0]
         self.test_flag = False
         self.w, self.h = pyautogui.size()
+        self.scroll = False
 
         self.slow = 0
 
@@ -138,6 +139,7 @@ class HandDetector:
 
         if not (ret[0] or ret[1] or ret[2] or ret[3] or ret[4]):
             self.test_flag = False
+            self.scroll = False
 
         if self.test_flag:
             self.slow += 1
@@ -148,6 +150,11 @@ class HandDetector:
                 y = int((self.h * 1.1 * index_tip['y'])) % self.h
 
                 win32api.SetCursorPos((x, y))
+                
+
+            if not (ret[1] and ret[2] and ret[3]):
+                self.scroll = True
+
 
             if not ret[1]:
                 pyautogui.click()
@@ -219,7 +226,6 @@ while True:
 
             end_x = start_x + 170
             dy = 30
-            print(temp.loc['middle_finger_tip']['x'])
             if fingos[2] and not(fingos[1] or fingos[3] or fingos[4]) :
                 tip = (int(temp.loc['middle_finger_tip']['x'] * w), int(temp.loc['middle_finger_tip']['y'] * h))
                 dip = (int(temp.loc['middle_finger_dip']['x'] * w), int(temp.loc['middle_finger_dip']['y'] * h))
