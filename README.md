@@ -1,6 +1,20 @@
-This application can be lled and run by doing the following:
+This application uses python 3.11.6
 
-........
+use your package manager of choice to install the following libraries:
+
+cv2
+mediapipe
+numpy
+pandas
+time
+webbrowser
+PIL.ImageGrab
+keyboard
+pyautogui
+win32con
+win32api
+
+When that is complete run the 
 
 
 This application supports the following gestures:
