@@ -20,7 +20,7 @@ When that is complete run the "HandDetecterClass.py" class<br>
 This application supports the following gestures:<br>
 
 Index and middle finger up: Open google in the system's default browser<br>
-Thumb and pink up : Take a screenshot<br>
+Thumb and pinky up : Take a screenshot<br>
 Index finger and pinky up : Close selected program (Alt + F4)<br>
 Index, middle, and ring finger up : Close the current browser tab<br>
 Middle finger: [CENSORED]<br><br>
